@@ -42,11 +42,13 @@ public class CartServiceImpl implements CartService {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
         Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
         Product product = productService.findProductByProductId(productId).get();
-        Cart item = Cart.builder()
-                .member(member)
-                .product(product)
-                .build();
-        cartRepository.save(item);
+        if (!cartRepository.existsByMemberAndProduct(member, product)) {
+            Cart item = Cart.builder()
+                    .member(member)
+                    .product(product)
+                    .build();
+            cartRepository.save(item);
+        }
     }
 
     /**

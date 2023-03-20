@@ -20,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartServiceImpl implements CartService {
 
     private final MemberService memberService;
@@ -36,28 +38,17 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     @Override
-    public SimpleVO addCart(Long productId, String header) {
-        try {
-            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
-            Product product = productService.findProductByProductId(productId);
-            if(!cartRepository.existsByMemberAndProduct(member, product)) {
-                Cart item = Cart.builder()
-                        .member(member)
-                        .product(product)
-                        .build();
-                cartRepository.save(item);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            return SimpleVO.builder()
-                    .status("failed:장바구니 추가에 실패했습니다.")
+    public void addCart(Long productId, String header) {
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
+        Product product = productService.findProductByProductId(productId).get();
+        if (!cartRepository.existsByMemberAndProduct(member, product)) {
+            Cart item = Cart.builder()
+                    .member(member)
+                    .product(product)
                     .build();
+            cartRepository.save(item);
         }
-        return SimpleVO.builder()
-                .status("success")
-                .build();
     }
 
     /**
@@ -67,7 +58,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartVO selectAllCartProducts(String header) {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
         List<Cart> items = cartRepository.findCartsByMember(member);
         List<ProductResponseDTO> resultData = makeResultData(items);
         return CartVO.builder()
@@ -110,8 +101,8 @@ public class CartServiceImpl implements CartService {
     public SimpleVO deleteItem(Long productId, String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
-            Product product = productService.findProductByProductId(productId);
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
+            Product product = productService.findProductByProductId(productId).get();
             if(cartRepository.existsByMemberAndProduct(member, product)) {
                 cartRepository.deleteCartByMemberAndProduct(member, product);
             } else {
@@ -119,11 +110,11 @@ public class CartServiceImpl implements CartService {
             }
         } catch (Exception e) {
             return SimpleVO.builder()
-                    .status("failed:장바구니 삭제에 실패했습니다.")
+                    .message("failed:장바구니 삭제에 실패했습니다.")
                     .build();
         }
         return SimpleVO.builder()
-                .status("success")
+                .message("success")
                 .build();
     }
 
@@ -131,7 +122,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public DeleteResponseDTO deleteAllItems(String header) {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
         int num = cartRepository.deleteByMember(member);
         return DeleteResponseDTO.builder()
                 .status("success")

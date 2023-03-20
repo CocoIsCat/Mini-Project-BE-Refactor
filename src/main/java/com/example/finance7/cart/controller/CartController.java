@@ -6,11 +6,13 @@ import com.example.finance7.cart.service.CartService;
 import com.example.finance7.cart.vo.CartVO;
 import com.example.finance7.cart.vo.SimpleVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,21 +20,44 @@ public class CartController {
 
     private final CartService cartService;
 
+    /**
+     * 장바구니에 상품 추가
+     * @param requestDTO
+     * @param request
+     * @return
+     */
     @PostMapping("/cart")
-    public SimpleVO addCart(@RequestBody CartRequestDTO requestDTO, HttpServletRequest request) {
-        return cartService.addCart(requestDTO.getProductId(), request.getHeader(HttpHeaders.AUTHORIZATION));
+    public ResponseEntity addCart(@Valid @RequestBody CartRequestDTO requestDTO, HttpServletRequest request) {
+        cartService.addCart(requestDTO.getProductId(), request.getHeader(HttpHeaders.AUTHORIZATION));
+        return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * 장바구니 모든 상품 조회
+     * @param request
+     * @return
+     */
     @GetMapping("/cart")
     public CartVO selectAllCartProducts(HttpServletRequest request) {
         return cartService.selectAllCartProducts(request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
+    /**
+     * 장바구니에서 상품 삭제
+     * @param requestDTO
+     * @param request
+     * @return
+     */
     @DeleteMapping("/cart")
     public SimpleVO deleteItem(@RequestBody CartRequestDTO requestDTO, HttpServletRequest request) {
         return cartService.deleteItem(requestDTO.getProductId(), request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 
+    /**
+     * 장바구니 상품 모두 삭제
+     * @param request
+     * @return
+     */
     @DeleteMapping("/cart/all")
     public DeleteResponseDTO deleteAllItems(HttpServletRequest request) {
         return cartService.deleteAllItems(request.getHeader(HttpHeaders.AUTHORIZATION));

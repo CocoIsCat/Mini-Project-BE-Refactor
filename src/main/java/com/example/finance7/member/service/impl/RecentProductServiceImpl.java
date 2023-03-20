@@ -42,7 +42,7 @@ public class RecentProductServiceImpl implements RecentProductService {
     public StatusResponseDTO findRecentProductsInfo(String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
 
             List<RecentProduct> recentProductList = recentProductRepository.findByMember(member);
             List<RecentProductInfoVO> resultData = new ArrayList<>();
@@ -99,9 +99,9 @@ public class RecentProductServiceImpl implements RecentProductService {
     public StatusResponseDTO addRecentProduct(Long productId, String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
 
-            Product product = productService.findProductByProductId(productId);
+            Product product = productService.findProductByProductId(productId).get();
             RecentProduct recentProduct = recentProductRepository.findByMemberAndProduct(member, product);
             if (recentProduct != null) {
                 recentProductRepository.delete(recentProduct);

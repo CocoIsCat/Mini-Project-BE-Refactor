@@ -38,7 +38,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Override
     public Member findMember(String header) throws NullPointerException {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
 
         if (!memberService.isOpenUser(member)) {
             throw new NoSuchElementException("이미 탈퇴한 회원입니다.");
@@ -143,7 +143,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     public StatusResponseDTO addRecentKeyword(String keyword, String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
             if (!checkDuplicate(member.getMemberId(), keyword)) {
                 checkElementsCount(member.getMemberId());
                 SearchHistory searchHistory = SearchHistory.builder()
@@ -202,7 +202,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
             if (member.getSecession().equals(Scession.CLOSE)) {
                 throw new RuntimeException("탈퇴한 회원입니다.");
             }
@@ -251,7 +251,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     public DeleteAllResponseDTO deleteKeywordAll(String header) {
         try {
             MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail());
+            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
             int deletedNum = searchHistoryRepository.deleteByMemberId(member.getMemberId());
             return DeleteAllResponseDTO.builder()
                     .status("success")

@@ -1,6 +1,7 @@
 package com.example.finance7.member.service.impl;
 
 import com.example.finance7.config.JwtProvider;
+import com.example.finance7.error.exceptions.UserNotFoundException;
 import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.dto.MemberResponseDTO;
 import com.example.finance7.member.entity.Member;
@@ -27,12 +28,12 @@ public class MemberServiceImpl implements MemberService {
     private final RedisTemplate redisTemplate;
 
     @Override
-    public Member findMemberByEmail(String email) {
+    public Optional<Member> findMemberByEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
         if (!member.isPresent()) {
-            throw new NullPointerException("회원을 찾을 수 없습니다.");
+            throw new UserNotFoundException();
         } else {
-            return member.get();
+            return member;
         }
     }
 

@@ -14,12 +14,12 @@ import java.util.Date;
 @Builder
 public class MemberRequestDTO {
 
-    String email;
-    String name;
-    String password;
+    private String email;
+    private String name;
+    private String password;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    Date birth;
-    String tag;
+    private Date birth;
+    private String tag;
 
     public Member toEntity(){
         return Member.builder()
@@ -32,7 +32,8 @@ public class MemberRequestDTO {
     }
 
     public MemberRequestDTO(Claims claims){
-        this.email = claims.get("email",String.class);
+        //this.email = claims.get("email",String.class);
+        this.email = "test@test.com";
     }
 
 }

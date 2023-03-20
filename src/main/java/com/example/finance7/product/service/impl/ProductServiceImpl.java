@@ -1,5 +1,6 @@
 package com.example.finance7.product.service.impl;
 
+import com.example.finance7.error.exceptions.ProductNotFoundException;
 import com.example.finance7.product.dto.*;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.repository.*;
@@ -30,13 +31,13 @@ public class ProductServiceImpl implements ProductService {
     private final SubscriptionRepository subscriptionRepository;
 
     @Override
-    public Product findProductByProductId(Long productId) {
+    public Optional<Product> findProductByProductId(Long productId) {
 
         Optional<Product> product = productRepository.findById(productId);
         if (!product.isPresent()) {
-            throw new NoSuchElementException("상품을 찾을 수 없습니다.");
+            throw new ProductNotFoundException();
         } else {
-            return product.get();
+            return product;
         }
     }
     /**

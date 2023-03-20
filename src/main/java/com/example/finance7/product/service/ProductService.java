@@ -4,16 +4,15 @@ import com.example.finance7.product.entity.Product;
 import com.example.finance7.product.vo.ProductResponsePagingVO;
 import com.example.finance7.product.vo.ProductResponseRecommendationGroupByCategory;
 import com.example.finance7.product.vo.ProductResponseVO;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
-import java.util.List;
+import java.util.Optional;
 
 public interface ProductService {
 
 
-    Product findProductByProductId(Long productId);
+    Optional<Product> findProductByProductId(Long productId);
 
     /**
      * 상세 상품 조회

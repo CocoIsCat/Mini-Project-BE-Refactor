@@ -15,5 +15,5 @@ public interface CartService {
 
     DeleteResponseDTO deleteAllItems(String header);
 
-    SimpleVO addCart(Long productId, String header);
+    void addCart(Long productId, String header);
 }

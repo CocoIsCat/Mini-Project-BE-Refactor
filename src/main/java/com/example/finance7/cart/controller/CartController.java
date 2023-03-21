@@ -60,7 +60,7 @@ public class CartController {
      * @return
      */
     @DeleteMapping("/cart/all")
-    public DeleteResponseDTO deleteAllItems(HttpServletRequest request) {
-        return cartService.deleteAllItems(request.getHeader(HttpHeaders.AUTHORIZATION));
+    public ResponseEntity<DeleteResponseDTO> deleteAllItems(HttpServletRequest request) {
+        return new ResponseEntity(cartService.deleteAllItems(request.getHeader(HttpHeaders.AUTHORIZATION)), HttpStatus.OK);
     }
 }

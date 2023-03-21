@@ -85,14 +85,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    @Transactional
     public DeleteResponseDTO deleteAllItems(String header) {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
         Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
-        int num = cartRepository.deleteByMember(member);
         return DeleteResponseDTO.builder()
-                .status("success")
-                .deletedNum(num)
+                .deletedProductNum(cartRepository.deleteByMember(member))
                 .build();
     }
 }

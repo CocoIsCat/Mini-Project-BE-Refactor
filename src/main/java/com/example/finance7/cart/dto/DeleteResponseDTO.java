@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class DeleteResponseDTO {
-    private String status;
-    private int deletedNum;
+    private int deletedProductNum;
 }

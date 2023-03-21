@@ -4,11 +4,10 @@ import com.example.finance7.cart.dto.*;
 import com.example.finance7.cart.entity.Cart;
 import com.example.finance7.cart.repository.CartRepository;
 import com.example.finance7.cart.service.CartService;
-import com.example.finance7.cart.vo.CartVO;
+import com.example.finance7.cart.dto.CartResponseDTO;
 import com.example.finance7.cart.vo.SimpleVO;
 import com.example.finance7.member.dto.MemberRequestDTO;
 import com.example.finance7.member.entity.Member;
-import com.example.finance7.member.repository.MemberRepository;
 import com.example.finance7.member.service.MemberService;
 import com.example.finance7.product.entity.*;
 import com.example.finance7.product.service.ProductService;
@@ -18,9 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,37 +54,17 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     @Override
-    public CartVO selectAllCartProducts(String header) {
+    @Transactional(readOnly = true)
+    public CartResponseDTO selectAllCartProducts(String header) {
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
         Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
         List<Cart> items = cartRepository.findCartsByMember(member);
-        List<ProductResponseDTO> resultData = makeResultData(items);
-        return CartVO.builder()
+        return CartResponseDTO.builder()
                 .dataNum(items.size())
-                .status("success")
-                .resultData(resultData)
+                .resultData(items.stream()
+                        .map(i -> i.toResponseDTO())
+                        .collect(Collectors.toList()))
                 .build();
-    }
-
-    /**
-     * 엔티티에 맞게 DTO 작성하는 메서드
-     * @param items
-     * @return
-     */
-    private List<ProductResponseDTO> makeResultData(List<Cart> items) {
-        List<ProductResponseDTO> resultData = new ArrayList<>();
-        for (Cart item : items) {
-            if (item.getProduct() instanceof Card) {
-                resultData.add(new CardResponseDTO().toDTO((Card)item.getProduct()));
-            } else if (item.getProduct() instanceof Loan) {
-                resultData.add(new LoanResponseDTO().toDTO((Loan)item.getProduct()));
-            } else if (item.getProduct() instanceof Savings) {
-                resultData.add(new SavingResponseDTO().toDTO((Savings)item.getProduct()));
-            } else if (item.getProduct() instanceof Subscription) {
-                resultData.add(new SubscriptionResponseDTO().toDTO((Subscription)item.getProduct()));
-            }
-        }
-        return resultData;
     }
 
     /**

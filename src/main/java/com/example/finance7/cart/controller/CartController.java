@@ -49,8 +49,9 @@ public class CartController {
      * @return
      */
     @DeleteMapping("/cart")
-    public SimpleVO deleteItem(@RequestBody CartRequestDTO requestDTO, HttpServletRequest request) {
-        return cartService.deleteItem(requestDTO.getProductId(), request.getHeader(HttpHeaders.AUTHORIZATION));
+    public ResponseEntity deleteItem(@Valid @RequestBody CartRequestDTO requestDTO, HttpServletRequest request) {
+        cartService.deleteItem(requestDTO.getProductId(), request.getHeader(HttpHeaders.AUTHORIZATION));
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**

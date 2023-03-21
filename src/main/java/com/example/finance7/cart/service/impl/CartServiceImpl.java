@@ -75,25 +75,13 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     @Override
-    @Transactional
-    public SimpleVO deleteItem(Long productId, String header) {
-        try {
-            MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
-            Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
-            Product product = productService.findProductByProductId(productId).get();
-            if(cartRepository.existsByMemberAndProduct(member, product)) {
-                cartRepository.deleteCartByMemberAndProduct(member, product);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            return SimpleVO.builder()
-                    .message("failed:장바구니 삭제에 실패했습니다.")
-                    .build();
+    public void deleteItem(Long productId, String header) {
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(jwtProvider.tokenToMember(header));
+        Member member = memberService.findMemberByEmail(memberRequestDTO.getEmail()).get();
+        Product product = productService.findProductByProductId(productId).get();
+        if(cartRepository.existsByMemberAndProduct(member, product)) {
+            cartRepository.deleteCartByMemberAndProduct(member, product);
         }
-        return SimpleVO.builder()
-                .message("success")
-                .build();
     }
 
     @Override

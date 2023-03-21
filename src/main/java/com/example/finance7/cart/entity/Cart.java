@@ -1,7 +1,8 @@
 package com.example.finance7.cart.entity;
 
+import com.example.finance7.cart.dto.*;
 import com.example.finance7.member.entity.Member;
-import com.example.finance7.product.entity.Product;
+import com.example.finance7.product.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,4 +38,19 @@ public class Cart {
     @CreatedDate
     @Column(name = "REGISTER_DATE", nullable = false)
     private LocalDateTime registerDate;
+
+
+    public ProductResponseDTO toResponseDTO() {
+        if (this.getProduct() instanceof Card) {
+            return new CardResponseDTO().toDTO((Card) this.getProduct());
+        } else if (this.getProduct() instanceof Loan) {
+            return new LoanResponseDTO().toDTO((Loan) this.getProduct());
+        } else if (this.getProduct() instanceof Savings) {
+            return new SavingResponseDTO().toDTO((Savings) this.getProduct());
+        } else if (this.getProduct() instanceof Subscription) {
+            return new SubscriptionResponseDTO().toDTO((Subscription) this.getProduct());
+        } else {
+            throw new IllegalStateException();
+        }
+    }
 }

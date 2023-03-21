@@ -1,7 +1,7 @@
 package com.example.finance7.cart.service;
 
 import com.example.finance7.cart.dto.DeleteResponseDTO;
-import com.example.finance7.cart.vo.CartVO;
+import com.example.finance7.cart.dto.CartResponseDTO;
 import com.example.finance7.cart.vo.SimpleVO;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public interface CartService {
 
 
-    CartVO selectAllCartProducts(String header);
+    CartResponseDTO selectAllCartProducts(String header);
 
     SimpleVO deleteItem(Long productId, String header);
 

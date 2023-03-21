@@ -18,4 +18,8 @@ public class ErrorResponse {
         return new ErrorResponse(message.getStatus(), message.getMessage());
     }
 
+    public static ErrorResponse of(String message) {
+        return new ErrorResponse(400, message);
+    }
+
 }

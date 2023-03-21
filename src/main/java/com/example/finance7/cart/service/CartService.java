@@ -11,7 +11,7 @@ public interface CartService {
 
     CartResponseDTO selectAllCartProducts(String header);
 
-    SimpleVO deleteItem(Long productId, String header);
+    void deleteItem(Long productId, String header);
 
     DeleteResponseDTO deleteAllItems(String header);
 

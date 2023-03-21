@@ -3,7 +3,7 @@ package com.example.finance7.cart.controller;
 import com.example.finance7.cart.dto.CartRequestDTO;
 import com.example.finance7.cart.dto.DeleteResponseDTO;
 import com.example.finance7.cart.service.CartService;
-import com.example.finance7.cart.vo.CartVO;
+import com.example.finance7.cart.dto.CartResponseDTO;
 import com.example.finance7.cart.vo.SimpleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +38,8 @@ public class CartController {
      * @return
      */
     @GetMapping("/cart")
-    public CartVO selectAllCartProducts(HttpServletRequest request) {
-        return cartService.selectAllCartProducts(request.getHeader(HttpHeaders.AUTHORIZATION));
+    public ResponseEntity<CartResponseDTO> selectAllCartProducts(HttpServletRequest request) {
+        return new ResponseEntity(cartService.selectAllCartProducts(request.getHeader(HttpHeaders.AUTHORIZATION)), HttpStatus.OK);
     }
 
     /**

@@ -21,4 +21,10 @@ public class GlobalExceptionHandler {
         ErrorResponse response = ErrorResponse.of(Messages.PRODUCT_NOT_FOUND);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {IllegalStateException.class})
+    public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) {
+        ErrorResponse response = ErrorResponse.of(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
